@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+
+{% set site = wordpress_sites['learn.med'] %}
+{% if site.limit_req is defined and site.limit_req.paths is defined and site.limit_req.enabled | default(false) %}
+{%- for path in site.limit_req.paths %}
+location = {{ path.path }} {
+  limit_req_status {{ path.status_code }};
+  limit_req   zone={{ path.zone }}  burst={{ path.burst }} nodelay;
+  include fastcgi_params;
+}
+{% endfor -%}
+{% endif %}

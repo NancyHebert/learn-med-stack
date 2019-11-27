@@ -1,0 +1,49 @@
+# Documentation: https://roots.io/trellis/docs/local-development-setup/
+wordpress_sites:
+  learn.med:
+    site_hosts:
+      - learn.med.uottawa.dev
+      - apprendre.med.uottawa.dev
+    local_path: ../learn-med-app # path targeting local Bedrock site directory (relative to Ansible root)
+    site_install: true
+    site_title: learn.med
+    admin_user: admin
+    # admin_password: (defined in group_vars/development/vault.yml)
+    admin_email: admin@learn.med.uottawa.dev
+    permalink_structure: "/%postname%/"
+    multisite:
+      enabled: false
+      subdomains: false
+    ssl:
+      enabled: true
+    cache:
+      enabled: false
+      duration: 30s
+    limit_req:
+      enabled: true
+      paths:
+        - path: /app/themes/learn-med-theme/lib/check-email.php
+          zone: one
+          status_code: 444
+          burst: 5
+    reports:
+      disabled: false # default true to prevent web access to the reports
+      path_regex: /app/themes/learn-med-theme/reports
+      max_execution_time: 3600 # 60 min * 60 s/min = 3600 seconds
+    env:
+      disable_wp_cron: true
+      wp_home: https://learn.med.uottawa.dev
+      wp_siteurl: https://learn.med.uottawa.dev/wp
+      wp_env: development
+      db_name: example_dev
+      db_user: example_dbuser
+      # db_password: (defined in group_vars/development/vault.yml)
+      cookie_domain: med.uottawa.dev
+      xapi_trust_domains_regex: '\.uottawa\.(ca|dev)$'
+      lrs_endpoint: https://uomedtest.waxlrs.com/TCAPI/
+      # lrs_user: (defined in group_vars/development/vault.yml)
+      # lrs_password: (defined in group_vars/development/vault.yml)
+      mistreatment_completion_mcpost_endpoint: https://stagingmedservices.med.uottawa.ca/api/MacpostMistreatmentModule/UpdateMistreatmentModuleDate
+      mistreatment_en_course_id: 1298
+      mistreatment_fr_course_id: 1501
+      ga_tracking_id: UA-13245411-18

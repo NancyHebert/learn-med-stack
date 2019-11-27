@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+rewrite  ^/wp/wp-content/plugins/(.*)$  /app/plugins/$1  last;
+
+# Override the Articulate Storyline launch page output to change a client-side parameter
+rewrite  ^/app/uploads/grassblade/.*/story.html$  /index.php  last;

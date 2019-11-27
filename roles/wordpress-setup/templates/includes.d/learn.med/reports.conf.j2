@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+
+{% set site = wordpress_sites['learn.med'] %}
+
+{% if site.reports is defined and site.reports.path_regex is defined and site.reports.disabled | default(true) -%}
+rewrite  ^{{ site.reports.path_regex }}/.*$  /index.php  last;
+{%- endif -%}
+
+{% if site.reports is defined and site.reports.path_regex and not site.reports.disabled | default (true) %}
+location ~ {{ site.reports.path_regex }}/.*\.php$ {
+  include fastcgi_params;
+  fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+  fastcgi_param DOCUMENT_ROOT $realpath_root;
+
+  send_timeout            {{ site.reports.max_execution_time | default (php_max_execution_time) }};
+
+  fastcgi_read_timeout    {{ site.reports.max_execution_time | default (php_max_execution_time) }};
+  fastcgi_send_timeout    {{ site.reports.max_execution_time | default (php_max_execution_time) }};
+  fastcgi_connect_timeout {{ site.reports.max_execution_time | default (php_max_execution_time) }};
+
+  fastcgi_pass unix:/var/run/php5-fpm-wordpress.sock;
+}
+{%- endif %}
